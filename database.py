@@ -27,16 +27,26 @@ db = sqlalchemy.create_engine(
         query={'unix_sock': '/cloudsql/{}/.s.PGSQL.5432'.format(cloud_sql_connection_name)
         }
     ),
+    pool_timeout=30,
+    pool_recycle=1800,
     # ... Specify additional properties here.
     # ...
 )
 
-
 @app.route('/', methods=['GET'])
 def index():
+    company = []
     with db.connect() as conn:
         # Execute the query and fetch all results
         query = conn.execute("SELECT * FROM company").fetchall()
+    for row in query:
+        company.append({
+            'ticker': row[0],
+            'name': row[1],
+            'public_data': row[2],
+            'sector': row[3]
+        })
+    print(company)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
