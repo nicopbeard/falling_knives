@@ -1,2 +1,2 @@
 #!/bin/bash
-awk -f extract.awk CAGData.csv > output.txt
+awk -f extract.awk CELGData.csv > output.txt

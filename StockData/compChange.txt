@@ -1,53 +1,55 @@
+* = no data
+
 AET -> MXIM
 AYI -> HFC
 AMG -> LYV
-APC -> LDOS
+APC* -> LDOS
 ANDV -> ROL
-BHGE -> BKR
-BBT -> TFC
+BHGE* -> BKR
+BBT* -> TFC
 BRK.B -> no data
 BHF -> DOW
 BF.B -> no data
 CA -> KEYS
 CBS -> VIAC
 CELG -> NOW
-WYN -> ABMD
+WYN* -> ABMD
 AMCR -> new
-GGP -> ANET
+GGP* -> ANET
 NFX -> ATO
 RRC -> BR
-TSS -> CDW
+TSS* -> CDW
 ESRX -> CE
 COL -> LW
-KORS -> CPRI
-DPS -> CPRT
+KORS* -> CPRI
+DPS* -> CPRT
 CSRA -> MSCI
 FLR -> CTVA
-DWDP -> DD -> SBAC
+DWDP* -> DD -> SBAC
 EQT -> JKHY
 NAVI -> EVRG
 EVHC -> FTNT
 SRCL -> FANG
-CAM -> FL -> IEX
+CAM* -> FL -> IEX
 TWX -> FLT
-TMK -> GL
+TMK* -> GL
 GT -> WAB
-HCP -> PEAK
-HRS -> LHX
+HCP* -> PEAK
+HRS* -> LHX
 JEC -> J
-LIN -> new
-LLL -> MKTX
-LUK -> JEF -> NVR
+PX* -> LIN
+LLL* -> MKTX
+LUK* -> JEF -> NVR
 NKTR -> LVS
 MAC -> STE
-MAT -> BMS -> no longer in nyse
+MAT -> BMS* -> no longer in nyse
 BMY -> no data
 MON -> TWTR
 STI -> ODFL
 XL -> WCG -> PAYC
 PCG -> TFX
-RHT -> TMUS
+RHT* -> TMUS
 SCG -> FRC
-SYMC -> NLOK
+SYMC* -> NLOK
 TRIP -> ZBRA
 VIAB -> WRB

@@ -1,16 +1,26 @@
 #!/bin/bash
 
 BEGIN {
-    FS = "->"
+    FS = ","
     quote = "'"
-    srand(9999999)
 }
 
 {
-    ticker = gsub(" ","", $2)
-    randNum = int(rand() * 99999999)
-    print "------------------------------------------------------------------------------------------------------------------------------------------"
-    print $2
-    print "insert into company (ticker, name, public_data, sector) values ("quote$2quote", "quote" "quote", "quote" "quote", "quote" "quote");"
-    print "insert into company_entity (entityID, ticker) values ("quote"47029976"quote", "quote$2quote");"
+    while(getline line < "addToDB.txt")
+    {
+        split(line, b, ",")
+        printf "insert into market (dataid, date, high, low, open, close, volume) values"
+        dataid = b[1]
+        ticker = b[2]
+        file = ticker"Data.csv"
+        while(getline line1 < file)
+        {
+            split(line1, a, ",")
+            if(a[1] == "Date")
+                continue
+            printf " ("quote dataid quote", "quote a[1] quote", "quote a[2] quote", "quote a[3] quote", "quote a[4] quote", "quote a[5] quote", "quote a[6] quote"),"
+        }
+        close(file)
+        print ";"
+    }
 }
