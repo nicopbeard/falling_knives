@@ -1,3 +1,5 @@
+package backend.DataModels;
+
 public class DataDataModel extends BaseDataModel {
 
     public int DataID;

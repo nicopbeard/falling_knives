@@ -1,3 +1,5 @@
+package backend.DataModels;
+
 public class QuarterlyDataModel extends DataDataModel {
 
     public int DataID;

@@ -1,3 +1,5 @@
+package backend.DataModels;
+
 public class EntityDataModel extends BaseDataModel {
 
     public int EntityID;

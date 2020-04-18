@@ -1,3 +1,5 @@
+package backend.DataModels;
+
 public class CompanyDataModel extends BaseDataModel {
 
     public String Ticker;

@@ -1,3 +1,5 @@
+package backend.DataModels;
+
 public class MarketDataModel extends DataDataModel {
 
     public int DataID;
