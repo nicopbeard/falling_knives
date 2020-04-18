@@ -4,5 +4,13 @@ public class MarketDataModel extends DataDataModel {
 
     public Date TradeDate;
 
-    // TODO: decide on and add other fields
+    public int high;
+
+    public int low;
+
+    public int open;
+
+    public int close;
+
+    public int volume;
 }
