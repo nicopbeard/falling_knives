@@ -9,7 +9,7 @@ public class App
         try
         {
            Class.forName("org.postgresql.Driver");
-           c = DriverManager.getConnection("jdbc:postgresql:///<postgres>?cloudSqlInstance=<adroit-nimbus-272020:us-central1:database>&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=<postgres>&password=<csb312>");
+           c = DriverManager.getConnection("jdbc:postgresql:///postgres?cloudSqlInstance=adroit-nimbus-272020:us-central1:database&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=csb312");
         }
         catch (Exception e)
         {

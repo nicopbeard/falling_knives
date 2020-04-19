@@ -1,4 +1,4 @@
-package backend.DataModels;
+package backend.src.main.java;
 
 public class MarketDataModel extends DataDataModel {
 
