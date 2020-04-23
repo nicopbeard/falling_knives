@@ -8,6 +8,8 @@ ANDV -> ROL
 BHGE* -> BKR
 BBT* -> TFC
 BRK.B -> no data
+LDQS -> no data
+EFTC -> no data
 BHF -> DOW
 BF.B -> no data
 CA -> KEYS

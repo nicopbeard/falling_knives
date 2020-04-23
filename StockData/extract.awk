@@ -6,7 +6,7 @@ BEGIN {
 }
 
 {
-    while(getline line < "addToDB.txt")
+    while(getline line < "toAdd.txt")
     {
         split(line, b, ",")
         printf "insert into market (dataid, date, high, low, open, close, volume) values"
