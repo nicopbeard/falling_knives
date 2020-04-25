@@ -17,14 +17,11 @@ public class App
         // Get connection to the database
         try {
             Class.forName("org.postgresql.Driver");
-            System.out.println("JDBC driver installed");
-            //conn = DriverManager.getConnection("jdbc:postgresql:///postgres?cloudSqlInstance=adroit-nimbus-272020:us-central1:database&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=csb312");
-            System.out.println("Congratulations");
+            conn = DriverManager.getConnection("jdbc:postgresql:///postgres?cloudSqlInstance=adroit-nimbus-272020:us-central1:database&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=csb312");
         }
         catch (Exception e) {
             System.out.println("Connenction Failed");
             e.printStackTrace();
-            //return;
         }
 
         menu();
