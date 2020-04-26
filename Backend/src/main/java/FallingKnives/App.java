@@ -35,6 +35,7 @@ public class App
             // TODO: Launch Application;
         }
 
+        conn.close();
         System.out.println("Operation Completed");
     }
 
