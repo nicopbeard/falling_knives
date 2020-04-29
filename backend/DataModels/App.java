@@ -43,7 +43,7 @@ public class App
                }
                float percentChange = input.nextFloat();
 
-               statement = c.prepareStatement("select dataid, sum((cast(close as float)-cast(open as float))/nullif(cast(open as float), 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((cast(close as float)-cast(open as float))/nullif(cast(open as float), 0)) < " + percentChange + ";");
+               statement = c.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
 
                result = statement.executeQuery();
                if(!result.next())
