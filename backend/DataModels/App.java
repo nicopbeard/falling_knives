@@ -109,6 +109,8 @@ public class App
       public static void calcRsi(Connection c, String ticker) throws SQLException, IOException, java.lang.ClassNotFoundException
       {
          Scanner input = new Scanner(System.in);
+         System.out.print("Enter the period for which you want the RSI to be calculated: ");
+         String period = input.next();
       }
 
       //calculates MACD
