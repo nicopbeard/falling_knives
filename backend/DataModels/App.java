@@ -56,38 +56,13 @@ public class App
                      calcRsi(c, ticker);
                      break;
                   case 3:
-                     // Float macd = calcMacd(c, ticker);
-                     // System.out.println(macd);
+                     calcMacd(c, ticker);
                      break;
                   default:
                      System.out.println("Invalid option.");
                      break;
                }
 
-               // ArrayList<Float> upMov = new ArrayList<Float>();
-               // ArrayList<Float> downMov = new ArrayList<Float>();
-
-               // statement = c.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
-
-               // result = statement.executeQuery();
-               // if(!result.next())
-               // {
-               //    System.out.println("That table doesn't exist");
-               // }
-               // PrintStream o = new PrintStream(new File("output.csv"));
-               // PrintStream console = System.out;
-               // System.setOut(o);
-               // System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", "Ticker", "Data ID", "Change", "Start Date", "End Date"));
-               // do
-               // {
-               //    PreparedStatement ticker = c.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "'");
-               //    ResultSet tickerResult = ticker.executeQuery();
-               //    tickerResult.next();
-               //    System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", tickerResult.getString("ticker"), result.getString("dataid"), result.getString("change"), result.getString("startdate"), result.getString("enddate")));
-               // }
-               // while(result.next());
-
-               // System.setOut(console);
                System.out.println("Enter \"quit\" to quit or anything else to search again");
                String choice = input.next();
                if(choice.equals("quit"))
