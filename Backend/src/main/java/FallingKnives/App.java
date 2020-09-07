@@ -32,7 +32,10 @@ public class App
             Tester.TestMethod(conn);
         }
         else if (toDo == 'A') {
-            // TODO: Launch Application;
+            // TODO: Launch Application
+        }
+        else if (toDo == 'C') {
+            PrevCloseView.CreatePrevCloseView(conn);
         }
 
         conn.close();
@@ -41,7 +44,7 @@ public class App
 
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "TA";
+        String actions = "TAC";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -64,7 +67,8 @@ public class App
 
     static void menu() {
         System.out.println("What action would you like to complete?");
-        System.out.println("[T] Test SQL Statements");
-        System.out.println("[A] Launch Application");
+        System.out.println("\t[T] Test SQL Statements");
+        System.out.println("\t[A] Launch Application");
+        System.out.println("\t[C] Run Command Line Admin Application");
     }
 }
