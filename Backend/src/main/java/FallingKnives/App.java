@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
 import static spark.Spark.*;
+import com.google.gson.Gson;
 
 public class App
 {
@@ -28,11 +29,19 @@ public class App
 
     public static void webUI(Connection conn)
     {
-        // Set up a route for serving the main page
-        get("/", (request, response) -> {
+        // final Gson gson = new Gson();
+        // // Set up a route for serving the main page
+        // post("/", (request, response) -> {
+        //     response.status(200);
+        //     response.type("application/json");
 
-            return "";
-        });
+        //     Request req = gson.fromJson(request.body(), Request.class);
+
+        //     String sDate = request.sDate;
+        //     String eDate = request.eDate;
+        //     Float pChange = request.pChange;
+        //     return "";
+        // });
     }
 
     public static void regularUI(Connection conn) throws SQLException
