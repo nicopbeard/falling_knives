@@ -28,8 +28,6 @@ public class App
 
     public static void webUI(Connection conn)
     {
-        // Get the port on which to listen for requests
-        Spark.port(getIntFromEnv("PORT", 4567));
         // Set up a route for serving the main page
         get("/", (request, response) -> {
 
