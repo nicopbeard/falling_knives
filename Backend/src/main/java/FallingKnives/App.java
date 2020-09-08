@@ -75,9 +75,9 @@ public class App
                 {
                     System.out.println("That table doesn't exist");
                 }
-                PrintStream o = new PrintStream(new File("output.csv"));
-                PrintStream console = System.out;
-                System.setOut(o);
+                // PrintStream o = new PrintStream(new File("output.csv"));
+                // PrintStream console = System.out;
+                // System.setOut(o);
                 System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", "Ticker", "Data ID", "Change", "Start Date", "End Date"));
                 do
                 {
@@ -88,7 +88,7 @@ public class App
                 }
                 while(result.next());
 
-                System.setOut(console);
+                // System.setOut(console);
                 System.out.println("Enter \"quit\" to quit or anything else to search again");
                 String choice = input.next();
                 if(choice.equals("quit"))
@@ -109,6 +109,7 @@ public class App
 
         conn.close();
         System.out.println("Operation Completed");
+        return;
     }
 
     static char prompt(BufferedReader in) {
