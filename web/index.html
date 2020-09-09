@@ -18,16 +18,44 @@
     </head>
 
     <body>
-        <script src="app.js"></script>
         <h1>Falling Knives Capstone</h1>
         <p>Welcome to the user interface for the Falling Knives Capstone project. This interface allows you to calculate which stocks are falling knives based on your inputs.</p>
         <p>Please enter the start date, end date, and percent change.</p>
-        <form action="/action_page.php">
-            <label for="sdate">Start date:</label>
+        <script>
+            function myFunc()
+            {
+                var sDate = document.getElementById("sdate");
+                var eDate = document.getElementById("edate");
+                var pChange = document.getElementById("pchange");
+
+                let xhr = new XMLHttpRequest();
+                // create a JSON object
+                const json = {
+                    "sdate": sDate,
+                    "edate": eDate,
+                    "pchange": pchange
+                };
+                xhr.open('POST', "http://localhost/", true);
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.send(JSON.stringify(json));
+                xhr.onreadystatechange = processRequest(xhr);
+            }
+
+            function processRequest(xhr)
+            {
+                if (xhr.readyState == 4 && xhr.status == 200)
+                {
+                    let response = JSON.parse(xhr.responseText);
+                    console.log(response);
+                }
+            }
+            </script>
+        <form onsubmit="myFunc()">
+            <label for="sdate">Start date (yyyy-mm-dd):</label>
             <input type="text" id="sdate" name="sdate"><br><br>
-            <label for="edate">End date:</label>
+            <label for="edate">End date (yyyy-mm-dd):</label>
             <input type="text" id="edate" name="edate"><br><br>
-            <label for="pchange">Percent change:</label>
+            <label for="pchange">Percent change (eg -0.3 = -30%):</label>
             <input type="text" id="pchange" name="pchange"><br><br>
             <input type="submit" value="Submit">
           </form>
