@@ -38,7 +38,7 @@ public class App extends HttpServlet
         //get fields
         String sDate = request.getParameter("sdate");
         String eDate = request.getParameter("edate");
-        Float pChange = request.getParameter("pchange");
+        String pChange = request.getParameter("pchange");
         
         System.out.println("Start date: " + sDate);
         System.out.println("End date: " + eDate);
