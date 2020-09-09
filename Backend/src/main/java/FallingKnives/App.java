@@ -33,7 +33,7 @@ public class App extends HttpServlet
         regularUI(conn);
     }
 
-    public static void webUI(Connection conn, HttpServletRequest request, HttpServletResponse response)
+    public static void webUI(Connection conn, HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         //get fields
         String sDate = request.getParameter("sdate");
