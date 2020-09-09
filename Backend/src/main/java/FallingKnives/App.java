@@ -2,15 +2,21 @@ package FallingKnives;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
-import static spark.Spark.*;
-import com.google.gson.Gson;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public class App
+@WebServlet("/fallingknives")
+public class App extends HttpServlet
 {
     public static void main(String[] args) throws SQLException
     {
@@ -27,21 +33,16 @@ public class App
         regularUI(conn);
     }
 
-    public static void webUI(Connection conn)
+    public static void webUI(Connection conn, HttpServletRequest request, HttpServletResponse response)
     {
-        // final Gson gson = new Gson();
-        // // Set up a route for serving the main page
-        // post("/", (request, response) -> {
-        //     response.status(200);
-        //     response.type("application/json");
-
-        //     Request req = gson.fromJson(request.body(), Request.class);
-
-        //     String sDate = request.sDate;
-        //     String eDate = request.eDate;
-        //     Float pChange = request.pChange;
-        //     return "";
-        // });
+        //get fields
+        String sDate = request.getParameter("sdate");
+        String eDate = request.getParameter("edate");
+        Float pChange = request.getParameter("pchange");
+        
+        System.out.println("Start date: " + sDate);
+        System.out.println("End date: " + eDate);
+        System.out.println("Percent change: " + pChange);
     }
 
     public static void regularUI(Connection conn) throws SQLException
