@@ -9,16 +9,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
 
-@WebServlet("/fallingknives")
-public class App extends HttpServlet
+public class App
 {
-    public static void main(String[] args) throws SQLException
+    public static void main(String[] args) throws Exception
     {
         Connection conn = null;
         // Get connection to the database
@@ -30,19 +29,37 @@ public class App extends HttpServlet
             System.out.println("Connenction Failed");
             e.printStackTrace();
         }
-        regularUI(conn);
+        //regularUI(conn);
+        webUI(conn);
     }
 
-    public static void webUI(Connection conn, HttpServletRequest request, HttpServletResponse response) throws Exception
+    public static void webUI(Connection conn) throws Exception
     {
-        //get fields
-        String sDate = request.getParameter("sdate");
-        String eDate = request.getParameter("edate");
-        String pChange = request.getParameter("pchange");
-        
-        System.out.println("Start date: " + sDate);
-        System.out.println("End date: " + eDate);
-        System.out.println("Percent change: " + pChange);
+        String webappDirLocation = "src/main/webapp/";
+        Tomcat tomcat = new Tomcat();
+
+        //The port that we should run on can be set into an environment variable
+        //Look for that variable and default to 8080 if it isn't there.
+        String webPort = System.getenv("PORT");
+        if(webPort == null || webPort.isEmpty()) {
+            webPort = "8000";
+        }
+
+        tomcat.setPort(Integer.valueOf(webPort));
+
+        StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
+        System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
+
+        // Declare an alternative location for your "WEB-INF/classes" dir
+        // Servlet 3.0 annotation will work
+        File additionWebInfClasses = new File("target/classes");
+        WebResourceRoot resources = new StandardRoot(ctx);
+        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes",
+                additionWebInfClasses.getAbsolutePath(), "/"));
+        ctx.setResources(resources);
+
+        tomcat.start();
+        tomcat.getServer().await();
     }
 
     public static void regularUI(Connection conn) throws SQLException
