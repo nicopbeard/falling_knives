@@ -29,8 +29,8 @@ public class App
             System.out.println("Connenction Failed");
             e.printStackTrace();
         }
-        regularUI(conn);
-        //webUI(conn);
+        //regularUI(conn);
+        webUI(conn);
     }
 
     public static void webUI(Connection conn) throws Exception
