@@ -1,1 +1,1 @@
-web: mvn exec:java
+web: sh execute.sh
