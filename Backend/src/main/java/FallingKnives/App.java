@@ -29,8 +29,8 @@ public class App
             System.out.println("Connenction Failed");
             e.printStackTrace();
         }
-        //regularUI(conn);
-        webUI(conn);
+        regularUI(conn);
+        //webUI(conn);
     }
 
     public static void webUI(Connection conn) throws Exception
@@ -48,14 +48,13 @@ public class App
         tomcat.setPort(Integer.valueOf(webPort));
 
         StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-        System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
+        System.out.println("configuring app with basedir: " + new File(webappDirLocation).getAbsolutePath());
 
         // Declare an alternative location for your "WEB-INF/classes" dir
         // Servlet 3.0 annotation will work
         File additionWebInfClasses = new File("target/classes");
         WebResourceRoot resources = new StandardRoot(ctx);
-        resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes",
-                additionWebInfClasses.getAbsolutePath(), "/"));
+        resources.addPreResources(new DirResourceSet(resources, "/target/Backend-1.0-SNAPSHOT/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
         ctx.setResources(resources);
 
         tomcat.start();
