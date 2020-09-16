@@ -1,3 +1,3 @@
 #!/bin/bash
-javac -target 1.8 App.java
+javac App.java
 java -cp .:postgresql-42.2.12.jar:jdbc-socket-factory-core-1.0.15.jar:jnr-unixsocket-0.19.jar:google-http-client-1.34.2.jar:google-http-client-jackson2-1.27.0.jar:guava-20.0.jar:google-auth-library-credentials-0.4.0.jar:google-auth-library-oauth2-http-0.1.0.jar:com.fasterxml.jackson.core.jar:google-api-client-1.30.9.jar:google-api-services-sqladmin-v1beta4-rev20190827-1.30.1.jar:opencensus-api-0.19.0.jar:grpc-context-1.18.0.jar:opencensus-contrib-http-util-0.19.0.jar App
