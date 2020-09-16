@@ -9,11 +9,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.webresources.DirResourceSet;
-import org.apache.catalina.webresources.StandardRoot;
 
 public class App
 {
@@ -30,35 +25,6 @@ public class App
             e.printStackTrace();
         }
         regularUI(conn);
-        //webUI(conn);
-    }
-
-    public static void webUI(Connection conn) throws Exception
-    {
-        String webappDirLocation = "src/main/webapp/";
-        Tomcat tomcat = new Tomcat();
-
-        //The port that we should run on can be set into an environment variable
-        //Look for that variable and default to 8080 if it isn't there.
-        String webPort = System.getenv("PORT");
-        if(webPort == null || webPort.isEmpty()) {
-            webPort = "8000";
-        }
-
-        tomcat.setPort(Integer.valueOf(webPort));
-
-        StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-        System.out.println("configuring app with basedir: " + new File(webappDirLocation).getAbsolutePath());
-
-        // Declare an alternative location for your "WEB-INF/classes" dir
-        // Servlet 3.0 annotation will work
-        File additionWebInfClasses = new File("target/classes");
-        WebResourceRoot resources = new StandardRoot(ctx);
-        resources.addPreResources(new DirResourceSet(resources, "/target/Backend-1.0-SNAPSHOT/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
-        ctx.setResources(resources);
-
-        tomcat.start();
-        tomcat.getServer().await();
     }
 
     public static void regularUI(Connection conn) throws SQLException
@@ -82,9 +48,9 @@ public class App
                 do
                 {
                     System.out.println("Please enter the start date, end date, and percent change");
-                    System.out.print("Start Date (mm-dd-yyyy): ");
+                    System.out.print("Start Date (yyyy-mm-dd): ");
                     String startDate = input.next();
-                    System.out.print("End Date (mm-dd-yyyy): ");
+                    System.out.print("End Date (yyyy-mm-dd): ");
                     String endDate = input.next();
                     System.out.print("Percent change: ");
                 while(!input.hasNextFloat())
