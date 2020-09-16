@@ -1,1 +1,1 @@
-web: sh execute.sh
+web: java $JAVA_OPTS -cp Backend/DataModels:Backend/DataModels/* App
