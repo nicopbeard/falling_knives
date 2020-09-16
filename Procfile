@@ -1,1 +1,1 @@
-web: sh execute.sh
+web: web: java $JAVA_OPTS -cp target/classes:target/Backend-1.0-SNAPSHOT/WEB_INF/lib/* FallingKnives.App
