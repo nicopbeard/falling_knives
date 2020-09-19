@@ -20,7 +20,7 @@ public class App
             conn = DriverManager.getConnection("jdbc:postgresql:///postgres?cloudSqlInstance=adroit-nimbus-272020:us-central1:database&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=csb312");
         }
         catch (Exception e) {
-            System.out.println("Connenction Failed");
+            System.out.println("Connection Failed");
             e.printStackTrace();
         }
         regularUI(conn);
