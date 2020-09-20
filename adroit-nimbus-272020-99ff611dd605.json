@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "adroit-nimbus-272020",
+  "private_key_id": "99ff611dd605183d50a8c0a0dc02cfd71eb92b90",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDSViQHVrROX2W1\nLl4jCF84QuKTwa4Q5b753+TFCsnUbRmshgA9Ga3S96q/MAESBLsMsYAfajKsXnre\n08e3JIq5HJkmNTAjSrxQdu8JC9ScxIFwXE8WgJvC/c0efBGN4kZ4MSGAfzI2+fVn\nW5PKA4oKHWjiQ27k7VkU9mRd3EhFyu8dTbycBPAw5vnYIwvjZQLG/qAfWypCjU41\nvXnMrTBLzOCQqIqFN71bJRNokojKPt7geHxP3kmicoHSfRnGF9fMPPPID1lbvTNv\nb8RBvRcnE+yFDuHnsFactChLdMU7EAwNRo6jG7pVyeQI7S3iOO/u24bjmqmZGjOd\n4X9NE31FAgMBAAECggEAWGGdzf+ez/fB8vnC0JGqASgJsPCHRc5kCvcLV8iKuloF\nmbrMyt/JbIZpFuEC8iFOv6yuG4UyOb+RfaQbnVcbe2EK8UUULyAuNNlk47Y25pCj\nmyUOjnQH/01KLW8QqT/VQJfUbfwEi5lIht+yIAaQsGNfOQQAyuz4q5hE4DO5oqk5\n7BC3ICiNOalVzyUoJ5wCaMTyLhGDOFqB+LN2Yj/lz95XSpAyL1g8xFU8nd5ekWvn\nANISxCMYGSCJ9lsWY4HmMHV9GiaVzJdTtcxK+958BcFQxWZ2Uzp2wEPc5xyHcuL9\nk7Dv58/e3JS7o5DNSKE2WGdyaZWqiFoAMNX9GboGmQKBgQDu8sFDCnQBnGEOzzy1\nOV+cWUKnIyEruczW/BrHG3uCVmJpff1cD4/lX6TJouCr7WvdjKnYhxx/avtL3Smv\nw3tTSa+phaVwsLDR1XbIMtegt0qbCnIuJN/L1HzE6jSU4UFoKxDFea7cWcMSJWQx\nPyRoc1oOB7pVMrv8glaP9S21kwKBgQDhWLB6OtXN5IC3lbqYzyFTa32WAgyBS+Ht\n3wVgepXWMeoXf8YwfY2znDbulZr9a4RpKOK9+qRWU957X9Ubv7aDQs0fRuW8PWEf\nfqRAWM5yNsT2dkmFnggFtXgsE6almbldtZCToIfk89TEUEKIMpKKQZxUplRFeE4I\n5cDCwt5IxwKBgFnWa1MJWxQ/9z3aLLj2GTxvUuAEFTSbZqhtoKO7cXRPhjCjbd5u\n+2sByrMEyfPaD/P8Lt957Pz6/ABJ5qJunK9zxNe3p7v2soQx/bbHZsrGHwarpsIy\nmvHHsiFW7O4MwsqnZmbYmSW/mdf4tvLNCqM6u2ELBsOBj6wgVOtLAySBAoGANy4w\niL2/fRtnKY1Qk/qkfnjj18fIqCCcwlLKTkW2Sy0N1ZNERLt553FpQiMAQO4DDn0k\niMDHXRxMbomY9aKMXrgM4ovJ1b5x+fRY5Cja5LzknjV46283J664LpLhS8vIyFmd\nfYjhvf63Kxs8L32yxIgsb84K9Lfw49zextJQ/CECgYBs7ObxcmC2d4AfX8tsvRsl\nD62Z8PJiQDc5wxasCiICLMO9CE6DlmMRUAjC6EccP6Yvyl8W0S6gICu55E9lJhBP\njq3hFpY2rRTX+k/D5pAK/I1aeCpeuJOrfwaRZqYTKcHM00jB9Bg4mU7+Ef4nGBCO\nM/12iqWQIxMO+P1gck0qNg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "client@adroit-nimbus-272020.iam.gserviceaccount.com",
+  "client_id": "117551017055652815945",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/client%40adroit-nimbus-272020.iam.gserviceaccount.com"
+}
