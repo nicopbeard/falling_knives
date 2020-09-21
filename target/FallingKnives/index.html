@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Falling Knives</title>
+    <style>
+        h1 {
+            text-align: center;
+            color: white;
+        }
+        body {
+            background-image: url('stock market.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Falling Knives Capstone</h1>
+    <p>Welcome to the user interface for the Falling Knives Capstone project. This interface allows you to calculate which stocks are falling knives based on your inputs.</p>
+        <p>Please enter the start date, end date, and percent change.</p>
+    <form action="App" method="post">
+        <label for="sdate">Start date (yyyy-mm-dd): </label>
+        <input type="text" name="sdate" id="sdate">
+        <label for="edate">End date (yyyy-mm-dd):</label>
+        <input type="text" name="edate" id="edate">
+        <label for="pchange">Percent change: </label>
+        <input type="text" name="pchange" id="pchange">
+        <input type="submit" name="submit" value="Submit">
+    </form>
+</body>
+</html>
