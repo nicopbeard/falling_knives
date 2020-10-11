@@ -42,12 +42,10 @@ public class App
             {
                 Scanner input = new Scanner(System.in);
                 boolean flag = true;
-                do
-                {
-                    System.out.println("Please enter the length of time (years) and percent change");
-                    System.out.print("Length of time: ");
-                    int startDate = input.nextInt();
-                    System.out.print("Percent change: ");
+                System.out.println("Please enter the length of time (years) and percent change");
+                System.out.print("Length of time: ");
+                int startDate = input.nextInt();
+                System.out.print("Percent change: ");
                 while(!input.hasNextFloat())
                 {
                     input.next();
@@ -55,7 +53,7 @@ public class App
                 }
                 float percentChange = input.nextFloat();
 
-                
+
             }
             catch(Exception e)
             {
