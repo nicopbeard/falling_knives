@@ -22,7 +22,7 @@ public class App
             conn = DriverManager.getConnection("jdbc:postgresql:///postgres?cloudSqlInstance=adroit-nimbus-272020:us-central1:database&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=csb312");
         }
         catch (Exception e) {
-            System.out.println("Connenction Failed");
+            System.out.println("Connection Failed");
             e.printStackTrace();
         }
         regularUI(conn);
@@ -34,25 +34,47 @@ public class App
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         char toDo = prompt(in);
 
-        if (toDo == 'T')
+        if (toDo == 'P')
         {
-                
-        }
-        else if (toDo == 'A') {
             PreparedStatement statement;
             ResultSet result = null;
             try
             {
                 Scanner input = new Scanner(System.in);
                 boolean flag = true;
-                System.out.println("------------------------------");
-                System.out.println("Welcome to the user interface");
+                do
+                {
+                    System.out.println("Please enter the length of time (years) and percent change");
+                    System.out.print("Length of time: ");
+                    int startDate = input.nextInt();
+                    System.out.print("Percent change: ");
+                while(!input.hasNextFloat())
+                {
+                    input.next();
+                    System.out.println("Incorrect input, try again");
+                }
+                float percentChange = input.nextFloat();
+
+                
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else if (toDo == 'C') {
+            PreparedStatement statement;
+            ResultSet result = null;
+            try
+            {
+                Scanner input = new Scanner(System.in);
+                boolean flag = true;
                 do
                 {
                     System.out.println("Please enter the start date, end date, and percent change");
-                    System.out.print("Start Date (mm-dd-yyyy): ");
+                    System.out.print("Start Date (yyyy-mm-dd): ");
                     String startDate = input.next();
-                    System.out.print("End Date (mm-dd-yyyy): ");
+                    System.out.print("End Date (yyyy-mm-dd): ");
                     String endDate = input.next();
                     System.out.print("Percent change: ");
                 while(!input.hasNextFloat())
@@ -154,7 +176,7 @@ public class App
 
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "TAI";
+        String actions = "PCI";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -177,8 +199,8 @@ public class App
 
     static void menu() {
         System.out.println("What action would you like to complete?");
-        System.out.println("\t[T] Test SQL Statements");
-        System.out.println("\t[A] Launch Application");
+        System.out.println("\t[P] Predict the chance a certain stock becomes a falling knife");
+        System.out.println("\t[C] Calculate falling knives from database");
         System.out.println("\t[I] Insert data into database");
     }
 }
