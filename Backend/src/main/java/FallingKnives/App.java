@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class App
 {
@@ -36,6 +37,7 @@ public class App
 
         if (toDo == 'P')
         {
+            /*
             PreparedStatement statement;
             ResultSet result = null;
             try
@@ -46,7 +48,7 @@ public class App
                 {
                     System.out.println("Please enter the length of time (years) and percent change");
                     System.out.print("Length of time: ");
-                    int startDate = input.nextInt();
+                    int time = input.nextInt();
                     System.out.print("Percent change: ");
                 while(!input.hasNextFloat())
                 {
@@ -56,11 +58,11 @@ public class App
                 float percentChange = input.nextFloat();
 
                 
-            }
-            catch(Exception e)
+            } catch(Exception e)
             {
                 e.printStackTrace();
             }
+            */
         }
         else if (toDo == 'C') {
             PreparedStatement statement;
@@ -95,11 +97,13 @@ public class App
                 // PrintStream console = System.out;
                 // System.setOut(o);
                 System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", "Ticker", "Data ID", "Change", "Start Date", "End Date"));
+                ArrayList<FallingKnifeDataModel> fkList = new ArrayList<FallingKnifeDataModel>();
                 do
                 {
                     PreparedStatement ticker = conn.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "'");
                     ResultSet tickerResult = ticker.executeQuery();
                     tickerResult.next();
+                    fkList.add(new FallingKnifeDataModel(tickerResult.getString("ticker"), result.getDate("startdate"), result.getDate("enddate"), result.getFloat("change")));
                     System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", tickerResult.getString("ticker"), result.getString("dataid"), result.getString("change"), result.getString("startdate"), result.getString("enddate")));
                 }
                 while(result.next());
