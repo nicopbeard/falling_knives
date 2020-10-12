@@ -15,7 +15,7 @@ public class Tester
                 CompanyDataModel comp = new CompanyDataModel(rs.getString("Ticker"), rs.getString("Name"), rs.getString("Sector"));
                 list.add(comp);
             }
-            System.out.println(String.format("%-10s %-25s %-10s", "Ticker", "ComapnyName", "Sector"));
+            System.out.println(String.format("%-10s %-25s %-10s", "Ticker", "Company Name", "Sector"));
             for (int i = 0; i < list.size(); i++) {
                 CompanyDataModel comp = list.get(i);
                 System.out.println(String.format("%-10s %-25s %-10s", comp.Ticker, comp.Name, comp.Sector));

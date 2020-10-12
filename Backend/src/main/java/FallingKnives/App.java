@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class App
 {
@@ -36,6 +37,7 @@ public class App
 
         if (toDo == 'P')
         {
+            
             PreparedStatement statement;
             ResultSet result = null;
             try
@@ -44,7 +46,12 @@ public class App
                 boolean flag = true;
                 System.out.println("Please enter the length of time (years) and percent change");
                 System.out.print("Length of time: ");
-                int startDate = input.nextInt();
+                while(!input.hasNextInt())
+                {
+                    input.next();
+                    System.out.println("Incorrect input, try again");
+                }
+                int time = input.nextInt();
                 System.out.print("Percent change: ");
                 while(!input.hasNextFloat())
                 {
@@ -53,7 +60,36 @@ public class App
                 }
                 float percentChange = input.nextFloat();
 
-
+                String startDate = "2010-01-01";
+                String endDate = "2012-01-01";
+                statement = conn.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
+                ArrayList<String> tickers = new ArrayList<String>();
+                ArrayList<String> dataids = new ArrayList<String>();
+                result = statement.executeQuery();
+                if(!result.next())
+                    System.out.println("That table doesn't exist");
+                do
+                {
+                    PreparedStatement ticker = conn.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "';");
+                    ResultSet tickerResult = ticker.executeQuery();
+                    tickerResult.next();
+                    tickers.add(tickerResult.getString("ticker"));
+                    dataids.add(result.getString("dataid"));
+                }
+                while(result.next());
+                for(int i = 0; i < dataids.size(); i++)
+                {
+                    String dataid = dataids.get(i);
+                    // Float niChange = calcPercentChangeAnnual(dataid, startDate, endDate, "net_income", conn);
+                    // Float revChange = calcPercentChangeAnnual(dataid, startDate, endDate, "revenue", conn);
+                    // Float gpChange = calcPercentChangeAnnual(dataid, startDate, endDate, "gross_profit", conn);
+                    // Float crChange = calcPercentChangeAnnual(dataid, startDate, endDate, "current_ratio", conn);
+                    // Float opCashChange = calcPercentChangeAnnual(dataid, startDate, endDate, "operating_cash_flow", conn);
+                    Float debtEquityChange = calcPercentChangeQuarterly(dataid, startDate, endDate, "debt_equity_ratio", conn);
+                    // Float gpMarginChange = calcPercentChangeAnnual(dataid, startDate, endDate, "gross_profit_margin", conn);
+                    // Float qrChange = calcPercentChangeAnnual(dataid, startDate, endDate, "quick_ratio", conn);
+                    System.out.println(debtEquityChange);
+                }
             }
             catch(Exception e)
             {
@@ -75,40 +111,38 @@ public class App
                     System.out.print("End Date (yyyy-mm-dd): ");
                     String endDate = input.next();
                     System.out.print("Percent change: ");
-                while(!input.hasNextFloat())
-                {
-                    input.next();
-                    System.out.println("Incorrect input, try again");
-                }
-                float percentChange = input.nextFloat();
+                    while(!input.hasNextFloat())
+                    {
+                        input.next();
+                        System.out.println("Incorrect input, try again");
+                    }
+                    float percentChange = input.nextFloat();
 
-                statement = conn.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
+                    statement = conn.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
 
-                result = statement.executeQuery();
-                if(!result.next())
-                {
-                    System.out.println("That table doesn't exist");
-                }
-                // PrintStream o = new PrintStream(new File("output.csv"));
-                // PrintStream console = System.out;
-                // System.setOut(o);
-                System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", "Ticker", "Data ID", "Change", "Start Date", "End Date"));
-                do
-                {
-                    PreparedStatement ticker = conn.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "'");
-                    ResultSet tickerResult = ticker.executeQuery();
-                    tickerResult.next();
-                    System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", tickerResult.getString("ticker"), result.getString("dataid"), result.getString("change"), result.getString("startdate"), result.getString("enddate")));
-                }
-                while(result.next());
+                    result = statement.executeQuery();
+                    if(!result.next())
+                        System.out.println("That table doesn't exist");
+                    // PrintStream o = new PrintStream(new File("output.csv"));
+                    // PrintStream console = System.out;
+                    // System.setOut(o);
+                    System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", "Ticker", "Data ID", "Change", "Start Date", "End Date"));
+                    ArrayList<FallingKnifeDataModel> fkList = new ArrayList<FallingKnifeDataModel>();
+                    do
+                    {
+                        PreparedStatement ticker = conn.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "'");
+                        ResultSet tickerResult = ticker.executeQuery();
+                        tickerResult.next();
+                        fkList.add(new FallingKnifeDataModel(tickerResult.getString("ticker"), result.getDate("startdate"), result.getDate("enddate"), result.getFloat("change")));
+                        System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", tickerResult.getString("ticker"), result.getString("dataid"), result.getString("change"), result.getString("startdate"), result.getString("enddate")));
+                    }
+                    while(result.next());
 
-                // System.setOut(console);
-                System.out.println("Enter \"quit\" to quit or anything else to search again");
-                String choice = input.next();
-                if(choice.equals("quit"))
-                {
-                    flag = false;
-                }
+                    // System.setOut(console);
+                    System.out.println("Enter \"quit\" to quit or anything else to search again");
+                    String choice = input.next();
+                    if(choice.equals("quit"))
+                        flag = false;
                 }
                 while(flag);
             }
@@ -169,7 +203,6 @@ public class App
 
         conn.close();
         System.out.println("Operation Completed");
-        return;
     }
 
     static char prompt(BufferedReader in) {
@@ -200,5 +233,76 @@ public class App
         System.out.println("\t[P] Predict the chance a certain stock becomes a falling knife");
         System.out.println("\t[C] Calculate falling knives from database");
         System.out.println("\t[I] Insert data into database");
+    }
+
+    public static Float calcPercentChangeAnnualAnnual(String dataid, String startDate, String endDate, String metric, Connection conn) throws Exception
+    {
+        PreparedStatement statement;
+        ResultSet result;
+        Float pChange = 0f;
+        Float previousVal = 0f;
+        Float currentVal = 0f;
+        int size = Integer.parseInt(endDate.substring(0,4)) - Integer.parseInt(startDate.substring(0,4));
+        int date = Integer.parseInt(startDate.substring(0,4));
+        for(int j = 0; j < size; j++)
+        {
+            statement = conn.prepareStatement("select " + metric + " from annual where dataid = '" + dataid + "' and report_date = '" + (date + j) + "-12-31';");
+            result = statement.executeQuery();
+            if(!result.next())
+            {
+                currentVal = 0f;
+                continue;
+            }
+            currentVal = result.getFloat(metric);
+            if(previousVal != 0)
+                pChange += ((currentVal - previousVal) / previousVal);
+            previousVal = currentVal;
+        }
+        return pChange;
+    }
+
+    public static Float calcPercentChangeQuarterly(String dataid, String startDate, String endDate, String metric, Connection conn) throws Exception
+    {
+        PreparedStatement statement;
+        ResultSet result;
+        Float pChange = 0f;
+        Float previousVal = 0f;
+        Float currentVal = 0f;
+        int size = Integer.parseInt(endDate.substring(0,4)) - Integer.parseInt(startDate.substring(0,4));
+        int year = Integer.parseInt(startDate.substring(0,4));
+        String date = "";
+        for(int i = 0; i < size; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                switch(j)
+                {
+                    case 0:
+                        date = (year + i) + "-03-31";
+                        break;
+                    case 1:
+                        date = (year + i) + "-06-30";
+                        break;
+                    case 2:
+                        date = (year + i) + "-09-30";
+                        break;
+                    case 3:
+                        date = (year + i) + "-12-31";
+                        break;
+                }
+                statement = conn.prepareStatement("select " + metric + " from annual where dataid = '" + dataid + "' and report_date = '" + date + "';");
+                result = statement.executeQuery();
+                if(!result.next())
+                {
+                    currentVal = 0f;
+                    continue;
+                }
+                currentVal = result.getFloat(metric);
+                if(previousVal != 0)
+                    pChange += ((currentVal - previousVal) / previousVal);
+                previousVal = currentVal;
+            }
+        }
+        return pChange;
     }
 }
