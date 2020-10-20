@@ -218,6 +218,7 @@ public class App
                         sumSize--;
                     
                     Float avgDiff = (diffSum / sumSize);
+                    System.out.println(avgDiff);
                     if(!(diffSum.isNaN()))
                         sum += avgDiff;
                     else
