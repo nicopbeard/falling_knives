@@ -235,46 +235,39 @@ public class App
         else if (toDo == 'C') {
             PreparedStatement statement;
             ResultSet result = null;
+            
             try
             {
                 Scanner input = new Scanner(System.in);
                 boolean flag = true;
                 do
                 {
-                    System.out.println("Please enter the start date, end date, and percent change");
-                    System.out.print("Start Date (yyyy-mm-dd): ");
-                    String startDate = input.next();
-                    System.out.print("End Date (yyyy-mm-dd): ");
-                    String endDate = input.next();
-                    System.out.print("Percent change: ");
-                    while(!input.hasNextFloat())
-                    {
-                        input.next();
-                        System.out.println("Incorrect input, try again");
-                    }
+                    System.out.println("Please enter the percent change of stocks to search for (decimal format)");
                     float percentChange = input.nextFloat();
-
-                    statement = conn.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
-
+                    System.out.println("Please enter the number of years to check the percent change");
+                    float years = input.nextInt();
+                    int days = (int)(365*years);
+                    System.out.println("Running Calculations");
+                    statement = conn.prepareStatement("SELECT DISTINCT Market.DataID, Open, FutureOpen, StartDate, EndDate FROM Market JOIN (SELECT DISTNCT DataID, Open as FutureOpen, Date-? as StartDate, Date as EndDate FROM Market) Future ON Market.Date = Future.StartDate AND Market.DataID = Future.DataID WHERE Date > \'01/01/2000\' AND Open <> 0 AND FutureOpen <> 0 AND (FutureOpen-Open)/Open < ?;");
+                    statement.setInt(1, days);
+                    statement.setFloat(2, percentChange);
                     result = statement.executeQuery();
-                    if(!result.next())
-                        System.out.println("That table doesn't exist");
-                    // PrintStream o = new PrintStream(new File("output.csv"));
-                    // PrintStream console = System.out;
-                    // System.setOut(o);
-                    System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", "Ticker", "Data ID", "Change", "Start Date", "End Date"));
                     ArrayList<FallingKnifeDataModel> fkList = new ArrayList<FallingKnifeDataModel>();
-                    do
-                    {
-                        PreparedStatement ticker = conn.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "'");
-                        ResultSet tickerResult = ticker.executeQuery();
-                        tickerResult.next();
-                        fkList.add(new FallingKnifeDataModel(tickerResult.getString("ticker"), result.getDate("startdate"), result.getDate("enddate"), result.getFloat("change")));
-                        System.out.println(String.format("%-7s %-10s %-25s %-15s %-15s", tickerResult.getString("ticker"), result.getString("dataid"), result.getString("change"), result.getString("startdate"), result.getString("enddate")));
+                    System.out.println(String.format("%10s %10s %10s %10s %10s %10s %10s", "DataID", "Ticker", "StartDate", "EndDate", "Open", "FutureOpen", "Change"));
+                    while(result.next()) {
+                        String id = result.getString("dataid");
+                        PreparedStatement tickerQuery = conn.prepareStatement("select ticker from relates where dataid = '" + id + "';");
+                        ResultSet tickerResult = tickerQuery.executeQuery();
+                        if (!tickerResult.next()) {
+                            continue;
+                        }
+                        String ticker = tickerResult.getString("Ticker");
+                        FallingKnifeDataModel fk = new FallingKnifeDataModel(id, ticker, result.getDate("StartDate"), result.getDate("EndDate"), result.getFloat("Open"), result.getFloat("FutureOpen"));
+                        System.out.println(String.format("%10s %10s %10s %10s %10f %10f %10f", fk.DataID, fk.Ticker, fk.StartDate, fk.EndDate, fk.Open, fk.FutureOpen, fk.Change));
+                        fkList.add(fk);
                     }
-                    while(result.next());
+                    System.out.println("\n" + fkList.size() + " Falling Knives found, printing results\n");
 
-                    // System.setOut(console);
                     System.out.println("Enter \"quit\" to quit or anything else to search again");
                     String choice = input.next();
                     if(choice.equals("quit"))
