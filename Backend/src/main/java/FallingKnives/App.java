@@ -48,7 +48,7 @@ public class App
                 String dataIdofTicker = "";
                 do
                 {
-                    System.out.println("Please enter the ticker you want to be analyzed: ");
+                    System.out.print("Please enter the ticker you want to be analyzed: ");
                     tickerAnalyzed = input.next();
                     statement = conn.prepareStatement("select dataid from relates where ticker = '" +  tickerAnalyzed + "';");
                     result = statement.executeQuery();
@@ -76,41 +76,29 @@ public class App
                 }
                 float percentChange = input.nextFloat();
 
-                String startDate = "2010-01-01";
-                String endDate = "2012-01-01";
-                statement = conn.prepareStatement("select dataid, sum((close-open)/nullif(open, 0))  as change, '" + startDate + "'  as startdate, '" + endDate + "' as enddate from market where date between '" + startDate + "' and '" + endDate + "' group by dataid having sum((close-open)/nullif(open, 0)) < " + percentChange + ";");
+                statement = conn.prepareStatement("SELECT DISTINCT Market.DataID, Open, FutureOpen, StartDate, EndDate FROM Market JOIN (SELECT DISTINCT DataID, Open as FutureOpen, Date-? as StartDate, Date as EndDate FROM Market) Future ON Market.Date = Future.StartDate AND Market.DataID = Future.DataID WHERE Date < \'01/01/2019\' AND Open <> 0 AND FutureOpen <> 0 AND (FutureOpen-Open)/Open < ? AND EXTRACT(Day FROM Date) = 1 AND EXTRACT(Month FROM Date) = 12;");
+                statement.setInt(1, time * 365);
+                statement.setFloat(2, percentChange);
                 ArrayList<String> dataids = new ArrayList<String>();
+                ArrayList<String> startDates = new ArrayList<String>();
+                ArrayList<String> endDates = new ArrayList<String>();
                 result = statement.executeQuery();
                 if(!result.next())
                     System.out.println("That table doesn't exist");
                 do
                 {
-                    PreparedStatement ticker = conn.prepareStatement("select ticker from relates where dataid = '" + result.getString("dataid") + "';");
-                    ResultSet tickerResult = ticker.executeQuery();
-                    tickerResult.next();
+                    startDates.add(result.getString("StartDate"));
+                    endDates.add(result.getString("EndDate"));
                     dataids.add(result.getString("dataid"));
                 }
                 while(result.next());
-                Float niChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "net_income", conn);
-                Float revChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "revenue", conn);
-                Float retEarnChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "retained_earnings", conn);
-                Float crChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "current_ratio", conn);
-                Float opCashChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "operating_cash_flow", conn);
-                Float debtEquityChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "debt_equity_ratio", conn);
-                Float gpMarginChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "gross_profit_margin", conn);
-                Float qrChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "quick_ratio", conn);
-                Float niChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "net_income", conn);
-                Float revChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "revenue", conn);
-                Float retEarnChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "retained_earnings", conn);
-                Float crChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "current_ratio", conn);
-                Float opCashChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "operating_cash_flow", conn);
-                Float debtEquityChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "debt_equity_ratio", conn);
-                Float gpMarginChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "gross_profit_margin", conn);
-                Float qrChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "quick_ratio", conn);
+                
                 Float sum = 0f;
                 int size = dataids.size();
                 for(int i = 0; i < dataids.size(); i++)
                 {
+                    String startDate = startDates.get(i);
+                    String endDate = endDates.get(i);
                     int sumSize = 16;
                     Float diffSum = 0f;
                     String dataid = dataids.get(i);
@@ -119,6 +107,26 @@ public class App
                         size--;
                         continue;
                     }
+
+                    //stock the user inputted
+                    Float niChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "net_income", conn);
+                    Float revChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "revenue", conn);
+                    Float retEarnChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "retained_earnings", conn);
+                    Float crChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "current_ratio", conn);
+                    Float opCashChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "operating_cash_flow", conn);
+                    Float debtEquityChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "debt_equity_ratio", conn);
+                    Float gpMarginChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "gross_profit_margin", conn);
+                    Float qrChangeStockAnnual = calcPercentChangeAnnual(dataIdofTicker, startDate, endDate, "quick_ratio", conn);
+                    Float niChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "net_income", conn);
+                    Float revChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "revenue", conn);
+                    Float retEarnChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "retained_earnings", conn);
+                    Float crChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "current_ratio", conn);
+                    Float opCashChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "operating_cash_flow", conn);
+                    Float debtEquityChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "debt_equity_ratio", conn);
+                    Float gpMarginChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "gross_profit_margin", conn);
+                    Float qrChangeStockQuarter = calcPercentChangeQuarterly(dataIdofTicker, startDate, endDate, "quick_ratio", conn);
+
+                    //stock currently being analyzed
                     Float niChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "net_income", conn);
                     Float niDiffAnnual = niChangeStockAnnual - niChangeAnnual;
                     if(!(niDiffAnnual.isNaN()))
