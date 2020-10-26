@@ -11,10 +11,11 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 public class App
 {
-    public static void main(String[] args) throws SQLException
+    public static void main(String[] args) throws Exception
     {
         Connection conn = null;
         // Get connection to the database
@@ -29,7 +30,7 @@ public class App
         regularUI(conn);
     }
 
-    public static void regularUI(Connection conn) throws SQLException
+    public static void regularUI(Connection conn) throws Exception
     {
         menu();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -226,9 +227,11 @@ public class App
                         sumSize--;
                     
                     Float avgDiff = (diffSum / sumSize);
-                    System.out.println(avgDiff);
-                    if(!(diffSum.isNaN()))
+                    if(!(diffSum.isNaN()) && !(diffSum.isInfinite()))
+                    {
+                        System.out.println(avgDiff);
                         sum += avgDiff;
+                    }
                     else
                         size--;
                 }
@@ -376,30 +379,12 @@ public class App
     {
         PreparedStatement statement;
         ResultSet result;
+        statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, sum((future_" + metric + "-" + metric + ")/" + metric + ") as change FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-365 as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by annual.dataid;");
+        result = statement.executeQuery();
         Float pChange = 0f;
-        Float previousVal = 0f;
-        Float currentVal = 0f;
-        int size = Integer.parseInt(endDate.substring(0,4)) - Integer.parseInt(startDate.substring(0,4));
-        int date = Integer.parseInt(startDate.substring(0,4));
-        for(int j = 0; j < size + 1; j++)
-        {
-            statement = conn.prepareStatement("select " + metric + " from annual where dataid = '" + dataid + "' and report_date = '" + (date + j) + "-12-31';");
-            result = statement.executeQuery();
-            if(!result.next())
-            {
-                currentVal = 0f;
-                continue;
-            }
-            currentVal = result.getFloat(metric);
-            if(previousVal != 0)
-            {
-                if(Math.signum(currentVal - previousVal) == -1 && Math.signum(previousVal) == -1)
-                    pChange -= ((currentVal - previousVal) / previousVal);
-                else
-                    pChange += ((currentVal - previousVal) / previousVal);
-            }
-            previousVal = currentVal;
-        }
+        if(!result.next())
+            return pChange;
+        pChange = result.getFloat("change");
         return pChange;
     }
 
@@ -407,49 +392,12 @@ public class App
     {
         PreparedStatement statement;
         ResultSet result;
+        statement = conn.prepareStatement("SELECT DISTINCT Quarterly.DataID, sum((future_" + metric + "-" + metric + ")/" + metric + ") as change FROM Quarterly JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-365 as StartDate, report_date as EndDate FROM Quarterly) Future ON Quarterly.report_date = Future.StartDate AND Quarterly.DataID = Future.DataID WHERE Quarterly.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by quarterly.dataid;");
+        result = statement.executeQuery();
         Float pChange = 0f;
-        Float previousVal = 0f;
-        Float currentVal = 0f;
-        int size = Integer.parseInt(endDate.substring(0,4)) - Integer.parseInt(startDate.substring(0,4));
-        int year = Integer.parseInt(startDate.substring(0,4));
-        String date = "";
-        for(int i = 0; i < size + 1; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                switch(j)
-                {
-                    case 0:
-                        date = (year + i) + "-03-31";
-                        break;
-                    case 1:
-                        date = (year + i) + "-06-30";
-                        break;
-                    case 2:
-                        date = (year + i) + "-09-30";
-                        break;
-                    case 3:
-                        date = (year + i) + "-12-31";
-                        break;
-                }
-                statement = conn.prepareStatement("select " + metric + " from annual where dataid = '" + dataid + "' and report_date = '" + date + "';");
-                result = statement.executeQuery();
-                if(!result.next())
-                {
-                    currentVal = 0f;
-                    continue;
-                }
-                currentVal = result.getFloat(metric);
-                if(previousVal != 0)
-                {
-                    if(Math.signum(currentVal - previousVal) == -1 && Math.signum(previousVal) == -1)
-                        pChange -= ((currentVal - previousVal) / previousVal);
-                    else
-                        pChange += ((currentVal - previousVal) / previousVal);
-                }
-                previousVal = currentVal;
-            }
-        }
+        if(!result.next())
+            return pChange;
+        pChange = result.getFloat("change");
         return pChange;
     }
 }
