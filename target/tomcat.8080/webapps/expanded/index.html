@@ -8,22 +8,24 @@
             text-align: center;
             color: white;
         }
-        body {
+        html {
             background-image: url('stock market.jpg');
             background-repeat: no-repeat;
             background-size: cover;
+        }
+        body {
             color: white;
         }
     </style>
 </head>
 <body>
     <h1>Falling Knives Capstone</h1>
-    <p>Welcome to the user interface for the Falling Knives Capstone project. This interface allows you to calculate which stocks are falling knives based on your inputs.</p>
-        <p>Please enter the start date, end date, and percent change.</p>
+    <p>Welcome to the user interface for the Falling Knives Capstone project. This interface allows you to determine how well a certain stock is doing compared to stocks that fell by a certain percentage.</p>
+        <p>Please enter the ticker, time period, and percent change.</p>
     <form action="App" method="post">
-        <label for="sdate">Start date (yyyy-mm-dd): </label>
+        <label for="sdate">Ticker: </label>
         <input type="text" name="sdate" id="sdate">
-        <label for="edate">End date (yyyy-mm-dd):</label>
+        <label for="edate">Time Period (years):</label>
         <input type="text" name="edate" id="edate">
         <label for="pchange">Percent change: </label>
         <input type="text" name="pchange" id="pchange">
