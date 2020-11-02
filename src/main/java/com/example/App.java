@@ -59,21 +59,30 @@ public class App extends HttpServlet
                }
                while(result.next());
 
-               Float sum = 0f;
-               int size = dataids.size();
+               int niSize = 2 * dataids.size();
+               int revSize = 2 * dataids.size();
+               int retEarnSize = 2 * dataids.size();
+               int crSize = 2 * dataids.size();
+               int opCashSize = 2 * dataids.size();
+               int deSize = 2 * dataids.size();
+               int gpSize = 2 * dataids.size();
+               int qrSize = 2 * dataids.size();
+               Float niSum = 0f;
+               Float revSum = 0f;
+               Float retEarnSum = 0f;
+               Float crSum = 0f;
+               Float opCashSum = 0f;
+               Float deSum = 0f;
+               Float gpSum = 0f;
+               Float qrSum = 0f;
                ArrayList<String> output = new ArrayList<String>();
                for(int i = 0; i < dataids.size(); i++)
                {
                   String startDate = startDates.get(i);
                   String endDate = endDates.get(i);
-                  int sumSize = 16;
-                  Float diffSum = 0f;
                   String dataid = dataids.get(i);
                   if(dataid.equals(ticker))
-                  {
-                     size--;
                      continue;
-                  }
 
                   //stock the user inputted
                   Float niChangeStockAnnual = calcPercentChangeAnnual(ticker, startDate, endDate, "net_income", c);
@@ -96,113 +105,122 @@ public class App extends HttpServlet
                   //stock currently being analyzed
                   Float niChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "net_income", c);
                   Float niDiffAnnual = niChangeStockAnnual - niChangeAnnual;
-                  if(!(niDiffAnnual.isNaN()))
-                     diffSum += niDiffAnnual;
+                  if(!(niDiffAnnual.isNaN()) && !(niDiffAnnual.isInfinite()))
+                     niSum += niDiffAnnual;
                   else
-                     sumSize--;
+                     niSize--;
                   Float revChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "revenue", c);
                   Float revDiffAnnual = revChangeStockAnnual - revChangeAnnual;
-                  if(!(revDiffAnnual.isNaN()))
-                     diffSum += revDiffAnnual;
+                  if(!(revDiffAnnual.isNaN()) && !(revDiffAnnual.isInfinite()))
+                     revSum += revDiffAnnual;
                   else
-                     sumSize--;
+                     revSize--;
                   Float retEarnChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "retained_earnings", c);
                   Float retEarnDiffAnnual = retEarnChangeStockAnnual - retEarnChangeAnnual;
-                  if(!(retEarnDiffAnnual.isNaN()))
-                     diffSum += retEarnDiffAnnual;
+                  if(!(retEarnDiffAnnual.isNaN()) && !(retEarnDiffAnnual.isInfinite()))
+                     retEarnSum += retEarnDiffAnnual;
                   else
-                     sumSize--;
+                     retEarnSize--;
                   Float crChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "current_ratio", c);
                   Float crDiffAnnual = crChangeStockAnnual - crChangeAnnual;
-                  if(!(crDiffAnnual.isNaN()))
-                     diffSum += crDiffAnnual;
+                  if(!(crDiffAnnual.isNaN()) && !(crDiffAnnual.isInfinite()))
+                     crSum += crDiffAnnual;
                   else
-                     sumSize--;
+                     crSize--;
                   Float opCashChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "operating_cash_flow", c);
                   Float opCashDiffAnnual = opCashChangeStockAnnual - opCashChangeAnnual;
-                  if(!(opCashDiffAnnual.isNaN()))
-                     diffSum += opCashDiffAnnual;
+                  if(!(opCashDiffAnnual.isNaN()) && !(opCashDiffAnnual.isInfinite()))
+                     opCashSum += opCashDiffAnnual;
                   else
-                     sumSize--;
+                     opCashSize--;
                   Float debtEquityChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "debt_equity_ratio", c);
                   Float debtEquityDiffAnnual = debtEquityChangeStockAnnual - debtEquityChangeAnnual;
-                  if(!(debtEquityDiffAnnual.isNaN()))
-                     diffSum += debtEquityDiffAnnual;
+                  if(!(debtEquityDiffAnnual.isNaN()) && !(debtEquityDiffAnnual.isInfinite()))
+                     deSum += debtEquityDiffAnnual;
                   else
-                     sumSize--;
+                     deSize--;
                   Float gpMarginChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "gross_profit_margin", c);
                   Float gpMarginDiffAnnual = gpMarginChangeStockAnnual - gpMarginChangeAnnual;
-                  if(!(gpMarginDiffAnnual.isNaN()))
-                     diffSum += gpMarginDiffAnnual;
+                  if(!(gpMarginDiffAnnual.isNaN()) && !(gpMarginDiffAnnual.isInfinite()))
+                     gpSum += gpMarginDiffAnnual;
                   else
-                     sumSize--;
+                     gpSize--;
                   Float qrChangeAnnual = calcPercentChangeAnnual(dataid, startDate, endDate, "quick_ratio", c);
                   Float qrDiffAnnual = qrChangeStockAnnual - qrChangeAnnual;
-                  if(!(qrDiffAnnual.isNaN()))
-                     diffSum += qrDiffAnnual;
+                  if(!(qrDiffAnnual.isNaN()) && !(qrDiffAnnual.isInfinite()))
+                     qrSum += qrDiffAnnual;
                   else
-                     sumSize--;
+                     qrSize--;
 
                   Float niChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "net_income", c);
                   Float niDiffQuarter = niChangeStockQuarter - niChangeQuarter;
-                  if(!(niDiffQuarter.isNaN()))
-                     diffSum += niDiffQuarter;
+                  if(!(niDiffQuarter.isNaN()) && !(niDiffQuarter.isInfinite()))
+                     niSum += niDiffQuarter;
                   else
-                     sumSize--;
+                     niSize--;
                   Float revChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "revenue", c);
                   Float revDiffQuarter = revChangeStockQuarter - revChangeQuarter;
-                  if(!(revDiffQuarter.isNaN()))
-                     diffSum += revDiffQuarter;
+                  if(!(revDiffQuarter.isNaN()) && !(revDiffQuarter.isInfinite()))
+                     revSum += revDiffQuarter;
                   else
-                     sumSize--;
+                     revSize--;
                   Float retEarnChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "retained_earnings", c);
                   Float retEarnDiffQuarter = retEarnChangeStockQuarter - retEarnChangeQuarter;
-                  if(!(retEarnDiffQuarter.isNaN()))
-                     diffSum += retEarnDiffQuarter;
+                  if(!(retEarnDiffQuarter.isNaN()) && !(retEarnDiffQuarter.isInfinite()))
+                     retEarnSum += retEarnDiffQuarter;
                   else
-                     sumSize--;
+                     retEarnSize--;
                   Float crChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "current_ratio", c);
                   Float crDiffQuarter = crChangeStockQuarter - crChangeQuarter;
-                  if(!(crDiffQuarter.isNaN()))
-                     diffSum += crDiffQuarter;
+                  if(!(crDiffQuarter.isNaN()) && !(crDiffQuarter.isInfinite()))
+                     crSum += crDiffQuarter;
                   else
-                     sumSize--;
+                     crSize--;
                   Float opCashChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "operating_cash_flow", c);
                   Float opCashDiffQuarter = opCashChangeStockQuarter - opCashChangeQuarter;
-                  if(!(opCashDiffQuarter.isNaN()))
-                     diffSum += opCashDiffQuarter;
+                  if(!(opCashDiffQuarter.isNaN()) && !(opCashDiffQuarter.isInfinite()))
+                     opCashSum += opCashDiffQuarter;
                   else
-                     sumSize--;
+                     opCashSize--;
                   Float debtEquityChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "debt_equity_ratio", c);
                   Float debtEquityDiffQuarter = debtEquityChangeStockQuarter - debtEquityChangeQuarter;
-                  if(!(debtEquityDiffQuarter.isNaN()))
-                     diffSum += debtEquityDiffQuarter;
+                  if(!(debtEquityDiffQuarter.isNaN()) && !(debtEquityDiffQuarter.isInfinite()))
+                     deSum += debtEquityDiffQuarter;
                   else
-                     sumSize--;
+                     deSize--;
                   Float gpMarginChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "gross_profit_margin", c);
                   Float gpMarginDiffQuarter = gpMarginChangeStockQuarter - gpMarginChangeQuarter;
-                  if(!(gpMarginDiffQuarter.isNaN()))
-                     diffSum += gpMarginDiffQuarter;
+                  if(!(gpMarginDiffQuarter.isNaN()) && !(gpMarginDiffQuarter.isInfinite()))
+                     gpSum += gpMarginDiffQuarter;
                   else
-                     sumSize--;
+                     gpSize--;
                   Float qrChangeQuarter = calcPercentChangeQuarterly(dataid, startDate, endDate, "quick_ratio", c);
                   Float qrDiffQuarter = qrChangeStockQuarter - qrChangeQuarter;
-                  if(!(qrDiffQuarter.isNaN()))
-                     diffSum += qrDiffQuarter;
+                  if(!(qrDiffQuarter.isNaN()) && !(qrDiffQuarter.isInfinite()))
+                     qrSum += qrDiffQuarter;
                   else
-                     sumSize--;
-                  
-                  Float avgDiff = diffSum / sumSize;
-                  if(!(diffSum.isNaN()) && !(diffSum.isInfinite()) && diffSum != 0)
-                  {
-                     output.add(dataid + " " + avgDiff);
-                     sum += avgDiff;
-                  }
-                  else
-                     size--;
+                     qrSize--;
                }
-               Float totAvg = sum / size;
-               output.add(ticker + " " + totAvg);
+               output.add(ticker);
+               Float niChange = niSum / niSize;
+               output.add("Net Income: " + niChange);
+               Float revChange = revSum / revSize;
+               output.add("Revenue: " + revChange);
+               Float retEarnChange = retEarnSum / retEarnSize;
+               output.add("Retained Earnings: " + retEarnChange);
+               Float crChange = crSum / crSize;
+               output.add("Current Ratio: " + crChange);
+               Float opCashChange = opCashSum / opCashSize;
+               output.add("Operating Cash Flow: " + opCashChange);
+               Float deChange = deSum / deSize;
+               output.add("Debt Equity Ratio: " + deChange);
+               Float gpChange = gpSum / gpSize;
+               output.add("Gross Profit Margin: " + gpChange);
+               Float qrChange = qrSum / qrSize;
+               output.add("Quick Ratio: " + qrChange);
+               Float totAvg = (niChange + revChange + retEarnChange + crChange + opCashChange + deChange + gpChange + qrChange) / 8;
+               output.add("-------------------------------------");
+               output.add("Overall Similarity: " + totAvg);
                req.setAttribute("output", output);
                RequestDispatcher view = req.getRequestDispatcher("result.jsp");
                view.forward(req, resp);
