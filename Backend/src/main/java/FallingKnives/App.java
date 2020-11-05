@@ -28,6 +28,7 @@ public class App
             e.printStackTrace();
         }
         regularUI(conn);
+        System.out.println("Bye!");
     }
 
     public static void regularUI(Connection conn) throws Exception
@@ -38,7 +39,13 @@ public class App
 
         if (toDo == 'P')
         {
-            
+            try {
+                Predict.runPrediction(conn);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            /*
             PreparedStatement statement;
             ResultSet result = null;
             try
@@ -260,6 +267,7 @@ public class App
             {
                 e.printStackTrace();
             }
+            */
         }
         else if (toDo == 'C') {
             PreparedStatement statement;
@@ -291,7 +299,7 @@ public class App
                             continue;
                         }
                         String ticker = tickerResult.getString("Ticker");
-                        FallingKnifeDataModel fk = new FallingKnifeDataModel(id, ticker, result.getDate("StartDate"), result.getDate("EndDate"), result.getFloat("Open"), result.getFloat("FutureOpen"));
+                        FallingKnifeDataModel fk = new FallingKnifeDataModel(id, ticker, result.getString("StartDate"), result.getString("EndDate"), result.getFloat("Open"), result.getFloat("FutureOpen"));
                         System.out.println(String.format("%10s %10s %10s %10s %10f %10f %10f", fk.DataID, fk.Ticker, fk.StartDate, fk.EndDate, fk.Open, fk.FutureOpen, fk.Change));
                         fkList.add(fk);
                     }
@@ -418,4 +426,5 @@ public class App
         pChange = result.getFloat("change");
         return pChange;
     }
+
 }
