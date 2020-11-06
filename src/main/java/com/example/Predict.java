@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
-import java.util.*; 
+import java.util.*;
 import javafx.util.Pair;
 
 public class Predict {
