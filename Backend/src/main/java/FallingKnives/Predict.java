@@ -1,19 +1,9 @@
 package FallingKnives;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.PrintStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.util.Scanner;
+import java.util.*;
 import java.util.ArrayList;
-import java.util.stream.IntStream;
-import java.util.*; 
-import javafx.util.Pair;
+import java.util.Scanner;
 
 public class Predict {
 
@@ -68,13 +58,11 @@ public class Predict {
             );
             // Annual and Quarterly list used to calculate average percent changes
             ArrayList<Trio> annualCalcList = new ArrayList<Trio>();
-            for (String field : fieldList) {
+            for (String field : fieldList)
                 annualCalcList.add(new Trio(field));
-            }
             ArrayList<Trio> quarterlyCalcList = new ArrayList<Trio>();
-            for (String field : fieldList) {
+            for (String field : fieldList)
                 quarterlyCalcList.add(new Trio(field));
-            }
 
             // Calculate percent changes for each historical FK
             for (FallingKnifeDataModel fk : fkList) {
@@ -87,7 +75,7 @@ public class Predict {
                 for (Trio t : annualCalcList) {
                     String field = t.Field;
                     Float annualChange = calcPercentChangeAnnual(dataid, startDate, endDate, field, days, conn);
-                    if ((!annualChange.isNaN()) &&(!annualChange.isInfinite())) {
+                    if ((!annualChange.isNaN()) && (!annualChange.isInfinite())) {
                         t.Sum += annualChange;
                         t.Count++;
                     }
@@ -112,9 +100,8 @@ public class Predict {
                 float requestedChange = 0; // TODO
                 // Calcualte percent deviation
                 float percentDeviation = ((requestedChange - averageChange) / averageChange) * 100;
-                if (percentDeviation < 0) {
+                if (percentDeviation < 0)
                     percentDeviation *= -1;
-                }
                 System.out.println(field + ": " + averageChange);
                 System.out.println(field + ": " + percentDeviation + "%");
             }
