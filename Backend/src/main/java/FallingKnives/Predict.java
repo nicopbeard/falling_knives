@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.lang.*;
 
 public class Predict {
 
@@ -97,12 +98,11 @@ public class Predict {
                 // Calculate average change for historical FK
                 float averageChange = t.Sum / t.Count;
                 // Calculate percent change for current FK
-                float requestedChange = 0; // TODO
+                float requestedChange = calcRequestedChangeAnnual(dataIdofTicker, field, days, conn);
                 // Calcualte percent deviation
-                float percentDeviation = ((requestedChange - averageChange) / averageChange) * 100;
-                if (percentDeviation < 0)
-                    percentDeviation *= -1;
+                float percentDeviation = ((requestedChange - averageChange) / Math.abs(averageChange)) * 100;
                 System.out.println(field + ": " + averageChange);
+                System.out.println(field + ": " + requestedChange);
                 System.out.println(field + ": " + percentDeviation + "%");
             }
         }
@@ -150,5 +150,28 @@ public class Predict {
         }
         while(result.next());
         return fkList;
+    }
+
+    public static float calcRequestedChangeAnnual(String dataID, String metric, int days, Connection conn) throws Exception {
+        Float change = 0f;
+        /*
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, (Future-?)/? as Change, EndDate FROM Annual JOIN (SELECT DISTINCT DataID, ? AS Future, report_date-? AS StartDate, report_date AS EndDate FROM Annual WHERE DataID = ?) F ON Annual.report_date = F.StartDate AND Annual.DataID = F.DataID WHERE ? <> 0 AND Future <> 0 ORDER BY EndDate DESC;");
+        statement.setString(1, metric);
+        statement.setString(2, metric);
+        statement.setString(3, metric);
+        statement.setInt(4, days);
+        statement.setString(5, dataID);
+        statement.setString(6, metric);
+        */
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/" + metric + ") as change, report_date FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataID + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 ORDER BY report_date DESC;");
+        ResultSet result = statement.executeQuery();
+        do {
+            if (!result.next()) {
+                change = 0f;
+                break;
+            }
+            change = result.getFloat("Change");
+        } while (change.isNaN() || change.isInfinite() || change == 0f);
+        return change;
     }
 }
