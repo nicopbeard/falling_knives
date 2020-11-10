@@ -7,14 +7,26 @@
         <style>
             h1 {
                 text-align: center;
-                color: black;
+                color: white;
+            }
+            html {
+                background-image: url('falling-knife-f-1.jpg');
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            body {
+                color: white;
+            }
+            p {
+                margin-left: 80px;
+                margin-right: 80px;
             }
         </style>
     </head>
-<body style="background-color: cyan;">
+<body>
     <h1>Search Query Results</h1>
-    <p style="margin-left:80px">
-        The following results indicate how the given stock compares to other stock profiles that have fallen by the percent change indicated,
+    <p>
+        The following results indicate how the given stock compares to other stock profiles that have fallen by the percent change indicated within the given period,
         with the overall similarity being the average of the metrics.<br>
         <%
         List<String> result = (List) request.getAttribute("output");
