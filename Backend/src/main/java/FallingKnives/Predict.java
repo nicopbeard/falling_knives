@@ -1,10 +1,10 @@
 package FallingKnives;
 
+import java.lang.*;
 import java.sql.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.lang.*;
 
 public class Predict {
 
@@ -114,7 +114,7 @@ public class Predict {
 
     public static Float calcPercentChangeAnnual(String dataid, String startDate, String endDate, String metric, int days, Connection conn) throws Exception
     {
-        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/" + metric + ") as change FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0;");
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/abs(" + metric + ")) as change FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0;");
         ResultSet result = statement.executeQuery();
         Float pChange = 0f;
         if(!result.next())
@@ -127,7 +127,7 @@ public class Predict {
     {
         PreparedStatement statement;
         ResultSet result;
-        statement = conn.prepareStatement("SELECT DISTINCT Quarterly.DataID, sum((future_" + metric + "-" + metric + ")/" + metric + ") as change FROM Quarterly JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-365 as StartDate, report_date as EndDate FROM Quarterly) Future ON Quarterly.report_date = Future.StartDate AND Quarterly.DataID = Future.DataID WHERE Quarterly.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by quarterly.dataid;");
+        statement = conn.prepareStatement("SELECT DISTINCT Quarterly.DataID, sum((future_" + metric + "-" + metric + ")/abs(" + metric + ")) as change FROM Quarterly JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-365 as StartDate, report_date as EndDate FROM Quarterly) Future ON Quarterly.report_date = Future.StartDate AND Quarterly.DataID = Future.DataID WHERE Quarterly.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by quarterly.dataid;");
         result = statement.executeQuery();
         Float pChange = 0f;
         if(!result.next())
@@ -163,7 +163,7 @@ public class Predict {
         statement.setString(5, dataID);
         statement.setString(6, metric);
         */
-        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/" + metric + ") as change, report_date FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataID + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 ORDER BY report_date DESC;");
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/abs(" + metric + ")) as change, report_date FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataID + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 ORDER BY report_date DESC;");
         ResultSet result = statement.executeQuery();
         do {
             if (!result.next()) {
