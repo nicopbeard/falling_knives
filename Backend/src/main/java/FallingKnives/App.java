@@ -1,17 +1,11 @@
 package FallingKnives;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.PrintStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.*;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.stream.IntStream;
+import java.util.Scanner;
 
 public class App
 {
@@ -321,50 +315,58 @@ public class App
         {
             PreparedStatement statement;
             ResultSet result = null;
-            try
+            statement = conn.prepareStatement("select ticker from relates;");
+            if(!result.next())
+                System.out.println("That table doesn't exist");
+            do
             {
-                File file = new File("/Users/nicobeard/Documents/falling-knives-capstone/Backend/src/main/java/FallingKnives/data.txt");
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String st = "";
-                while((st = br.readLine()) != null)
-                {
-                    String [] starray = st.split(" ");
-                    statement = conn.prepareStatement("select dataid from relates where ticker = '" + starray[1] + "';");
-                    result = statement.executeQuery();
-                    if(!result.next())
-                        System.out.println("That table doesn't exist");
-                    String dataid = result.getString("dataid");
-                    String date = starray[0].substring(0, 4) + "-" + starray[0].substring(4, 6) + "-" + starray[0].substring(6,8);
-                    String cli = starray[5];
-                    Float cli2 = 0f;
-                    if(!(cli.equals(".")))
-                        cli2 = Float.parseFloat(cli);
-                    String inv = starray[4];
-                    Float inv2 = 0f;
-                    if(!(inv.equals(".")))
-                        inv2 = Float.parseFloat(inv);
-                    String rev = starray[6];
-                    Float rev2 = 0f;
-                    if(!(rev.equals(".")))
-                        rev2 = Float.parseFloat(rev);
-                    String cogs = starray[3];
-                    Float cogs2 = 0f;
-                    if(!(cogs.equals(".")))
-                        cogs2 = Float.parseFloat(cogs);
-                    String ca = starray[2];
-                    Float ca2 = 0f;
-                    if(!(ca.equals(".")))
-                        ca2 = Float.parseFloat(ca);
-                    Float grossProfitMargin = (rev2 - cogs2) / rev2;
-                    Float quickRatio = (ca2 - inv2) / cli2;
-                    statement = conn.prepareStatement("update quarterly set gross_profit_margin = '" + grossProfitMargin + "', quick_ratio = '" + quickRatio + "' where dataid = '" + dataid + "' and report_date = '" + date + "';");
-                    statement.executeUpdate();
-                }
+                System.out.println(result.getString("ticker"));
             }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+            while(result.next());
+            // try
+            // {
+            //     File file = new File("/Users/nicobeard/Documents/falling-knives-capstone/Backend/src/main/java/FallingKnives/data.txt");
+            //     BufferedReader br = new BufferedReader(new FileReader(file));
+            //     String st = "";
+            //     while((st = br.readLine()) != null)
+            //     {
+            //         String [] starray = st.split(" ");
+            //         statement = conn.prepareStatement("select dataid from relates where ticker = '" + starray[1] + "';");
+            //         result = statement.executeQuery();
+            //         if(!result.next())
+            //             System.out.println("That table doesn't exist");
+            //         String dataid = result.getString("dataid");
+            //         String date = starray[0].substring(0, 4) + "-" + starray[0].substring(4, 6) + "-" + starray[0].substring(6,8);
+            //         String cli = starray[5];
+            //         Float cli2 = 0f;
+            //         if(!(cli.equals(".")))
+            //             cli2 = Float.parseFloat(cli);
+            //         String inv = starray[4];
+            //         Float inv2 = 0f;
+            //         if(!(inv.equals(".")))
+            //             inv2 = Float.parseFloat(inv);
+            //         String rev = starray[6];
+            //         Float rev2 = 0f;
+            //         if(!(rev.equals(".")))
+            //             rev2 = Float.parseFloat(rev);
+            //         String cogs = starray[3];
+            //         Float cogs2 = 0f;
+            //         if(!(cogs.equals(".")))
+            //             cogs2 = Float.parseFloat(cogs);
+            //         String ca = starray[2];
+            //         Float ca2 = 0f;
+            //         if(!(ca.equals(".")))
+            //             ca2 = Float.parseFloat(ca);
+            //         Float grossProfitMargin = (rev2 - cogs2) / rev2;
+            //         Float quickRatio = (ca2 - inv2) / cli2;
+            //         statement = conn.prepareStatement("update quarterly set gross_profit_margin = '" + grossProfitMargin + "', quick_ratio = '" + quickRatio + "' where dataid = '" + dataid + "' and report_date = '" + date + "';");
+            //         statement.executeUpdate();
+            //     }
+            // }
+            // catch(Exception e)
+            // {
+            //     e.printStackTrace();
+            // }
         }
 
         conn.close();
