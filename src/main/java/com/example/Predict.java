@@ -1,24 +1,31 @@
 package com.example;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.*;
 import java.util.*;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class Predict {
 
-    public static void runPrediction(Connection conn) throws Exception {
+    public static void runPrediction(Connection conn, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         PreparedStatement statement;
         ResultSet result = null;
+        ArrayList<String> output = new ArrayList<String>();
         try
         {
             Scanner input = new Scanner(System.in);
             boolean flag = false;
-            String tickerAnalyzed = "";
+            String tickerAnalyzed = req.getParameter("sdate");;
             String dataIdofTicker = "";
             do
             {
-                // Get the users ticker
-                System.out.print("Please enter the ticker you want to be analyzed: ");
-                tickerAnalyzed = input.next();
                 // Make sure the ticker is in our database
                 statement = conn.prepareStatement("select dataid from relates where ticker = '" +  tickerAnalyzed + "';");
                 result = statement.executeQuery();
@@ -30,23 +37,11 @@ public class Predict {
                     flag = true;
                 }
             } while(!flag);
-            // Get the users classification for a Falling Knife
-            System.out.println("Please enter the length of time (years) and percent change.");
-            System.out.print("Length of time: ");
-            while(!input.hasNextInt())
-            {
-                input.next();
-                System.out.println("Incorrect input, try again");
-            }
-            int time = input.nextInt();
+            String years = req.getParameter("edate");
+            int time = Integer.parseInt(years);
             int days = time*365;
-            System.out.print("Percent change: ");
-            while(!input.hasNextFloat())
-            {
-                input.next();
-                System.out.println("Incorrect input, try again");
-            }
-            float percentChange = input.nextFloat();
+            String pchange = req.getParameter("pchange");
+            Float percentChange = Float.parseFloat(pchange);
 
             // Get list of historical Falling Knives fitting users profile
             ArrayList<FallingKnifeDataModel> fkList = getHistoricalFallingKnives(days, percentChange, conn);
@@ -56,13 +51,11 @@ public class Predict {
             );
             // Annual and Quarterly list used to calculate average percent changes
             ArrayList<Trio> annualCalcList = new ArrayList<Trio>();
-            for (String field : fieldList) {
+            for (String field : fieldList)
                 annualCalcList.add(new Trio(field));
-            }
             ArrayList<Trio> quarterlyCalcList = new ArrayList<Trio>();
-            for (String field : fieldList) {
+            for (String field : fieldList)
                 quarterlyCalcList.add(new Trio(field));
-            }
 
             // Calculate percent changes for each historical FK
             for (FallingKnifeDataModel fk : fkList) {
@@ -75,7 +68,7 @@ public class Predict {
                 for (Trio t : annualCalcList) {
                     String field = t.Field;
                     Float annualChange = calcPercentChangeAnnual(dataid, startDate, endDate, field, days, conn);
-                    if ((!annualChange.isNaN()) &&(!annualChange.isInfinite())) {
+                    if ((!annualChange.isNaN()) && (!annualChange.isInfinite())) {
                         t.Sum += annualChange;
                         t.Count++;
                     }
@@ -90,22 +83,45 @@ public class Predict {
                 }
             }
 
-            System.out.println(tickerAnalyzed);
+            output.add((tickerAnalyzed));
             // Take the average for each field and print
             for (Trio t : annualCalcList) {
                 String field = t.Field;
                 // Calculate average change for historical FK
                 float averageChange = t.Sum / t.Count;
                 // Calculate percent change for current FK
-                float requestedChange = 0; // TODO
+                float requestedChange = calcRequestedChangeAnnual(dataIdofTicker, field, days, conn);
                 // Calcualte percent deviation
-                float percentDeviation = ((requestedChange - averageChange) / averageChange) * 100;
-                if (percentDeviation < 0) {
-                    percentDeviation *= -1;
-                }
-                System.out.println(field + ": " + averageChange);
-                System.out.println(field + ": " + percentDeviation + "%");
+                float percentDeviation = ((requestedChange - averageChange) / Math.abs(averageChange)) * 100;
+                output.add(field);
+                output.add("Historical Falling Knives Average Percent Change: " + averageChange + ", " + tickerAnalyzed + " Percent Change: " + requestedChange + ", " + "Overall Percent Change: " + percentDeviation + "%");
+                output.add("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             }
+
+            //get top headlines
+            output.add("Latest Key Developments");
+            String webURL = "https://in.reuters.com/finance/stocks/" + tickerAnalyzed + ".O/key-developments";
+            URL url = new URL(webURL);
+            InputStream is =  url.openStream();
+            try( BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if(line.contains("<a href=\"/finance/stocks") && line.contains("article") && !(line.contains("Full Article")))
+                        output.add(line.replaceFirst(".*\\>(.*)\\<.*", "$1"));
+                }
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+                throw new MalformedURLException("URL is malformed!!");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                throw new IOException();
+            }
+
+            req.setAttribute("output", output);
+            RequestDispatcher view = req.getRequestDispatcher("result.jsp");
+            view.forward(req, resp);
         }
         catch(Exception e)
         {
@@ -115,7 +131,7 @@ public class Predict {
 
     public static Float calcPercentChangeAnnual(String dataid, String startDate, String endDate, String metric, int days, Connection conn) throws Exception
     {
-        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/" + metric + ") as change FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0;");
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, sum((future_" + metric + "-" + metric + ")/abs(" + metric + ")) as change FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by annual.dataid;");
         ResultSet result = statement.executeQuery();
         Float pChange = 0f;
         if(!result.next())
@@ -128,7 +144,7 @@ public class Predict {
     {
         PreparedStatement statement;
         ResultSet result;
-        statement = conn.prepareStatement("SELECT DISTINCT Quarterly.DataID, sum((future_" + metric + "-" + metric + ")/" + metric + ") as change FROM Quarterly JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-365 as StartDate, report_date as EndDate FROM Quarterly) Future ON Quarterly.report_date = Future.StartDate AND Quarterly.DataID = Future.DataID WHERE Quarterly.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by quarterly.dataid;");
+        statement = conn.prepareStatement("SELECT DISTINCT Quarterly.DataID, sum((future_" + metric + "-" + metric + ")/abs(" + metric + ")) as change FROM Quarterly JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-365 as StartDate, report_date as EndDate FROM Quarterly) Future ON Quarterly.report_date = Future.StartDate AND Quarterly.DataID = Future.DataID WHERE Quarterly.dataid = '" + dataid + "' and report_date between '" + startDate + "' and '" + endDate + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 group by quarterly.dataid;");
         result = statement.executeQuery();
         Float pChange = 0f;
         if(!result.next())
@@ -151,5 +167,28 @@ public class Predict {
         }
         while(result.next());
         return fkList;
+    }
+
+    public static float calcRequestedChangeAnnual(String dataID, String metric, int days, Connection conn) throws Exception {
+        Float change = 0f;
+        /*
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, (Future-?)/? as Change, EndDate FROM Annual JOIN (SELECT DISTINCT DataID, ? AS Future, report_date-? AS StartDate, report_date AS EndDate FROM Annual WHERE DataID = ?) F ON Annual.report_date = F.StartDate AND Annual.DataID = F.DataID WHERE ? <> 0 AND Future <> 0 ORDER BY EndDate DESC;");
+        statement.setString(1, metric);
+        statement.setString(2, metric);
+        statement.setString(3, metric);
+        statement.setInt(4, days);
+        statement.setString(5, dataID);
+        statement.setString(6, metric);
+        */
+        PreparedStatement statement = conn.prepareStatement("SELECT DISTINCT Annual.DataID, ((future_" + metric + "-" + metric + ")/abs(" + metric + ")) as change, report_date FROM Annual JOIN (SELECT DISTINCT DataID, " + metric + " as future_" + metric + ", report_date-" + days + " as StartDate, report_date as EndDate FROM Annual) Future ON Annual.report_date = Future.StartDate AND Annual.DataID = Future.DataID WHERE Annual.dataid = '" + dataID + "' AND " + metric + " <> 0 AND future_" + metric + " <> 0 ORDER BY report_date DESC;");
+        ResultSet result = statement.executeQuery();
+        do {
+            if (!result.next()) {
+                change = 0f;
+                break;
+            }
+            change = result.getFloat("Change");
+        } while (change.isNaN() || change.isInfinite() || change == 0f);
+        return change;
     }
 }

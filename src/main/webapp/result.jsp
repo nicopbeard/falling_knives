@@ -10,7 +10,7 @@
                 color: white;
             }
             html {
-                background-image: url('falling-knife-f-1.jpg');
+                background-image: url('g.foolcdn.jpg');
                 background-repeat: no-repeat;
                 background-size: cover;
             }
