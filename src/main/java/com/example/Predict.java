@@ -20,7 +20,6 @@ public class Predict {
         ArrayList<String> output = new ArrayList<String>();
         try
         {
-            Scanner input = new Scanner(System.in);
             boolean flag = false;
             String tickerAnalyzed = req.getParameter("sdate");;
             String dataIdofTicker = "";
@@ -100,7 +99,7 @@ public class Predict {
 
             //get top headlines
             output.add("Latest Key Developments");
-            String webURL = "https://in.reuters.com/finance/stocks/" + tickerAnalyzed + ".O/key-developments";
+            String webURL = "https://in.reuters.com/finance/stocks/" + tickerAnalyzed + "/key-developments";
             URL url = new URL(webURL);
             InputStream is =  url.openStream();
             try( BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
